@@ -1,3 +1,5 @@
+### How this works
+Let’s take a look at the plugin’s code, which is very simple.
 ```
 if ( function_exists( 'add_theme_support' ) ) {
 
@@ -38,3 +40,8 @@ if ( function_exists( 'add_theme_support' ) ) {
     add_action('future_to_publish', 'easy_add_thumbnail');
 }
 ```
+What this code does is that it creates a function called easy_add_thumbnail, which checks if a featured image has been set for your post, and then if a featured image hasn’t been set, it will scan through the images in your post and assign one of them to be the featured image.
+
+Next, this code hooks that easy_add_thumbnail function to the post editing events so that the function will be called every time the post is published or displayed (for old posts).
+
+If you don’t want to install the plugin, you can just add this code snippet to your theme’s function.php file or create your own plugin, whichever you prefer.
