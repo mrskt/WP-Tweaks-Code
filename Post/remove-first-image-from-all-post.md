@@ -1,6 +1,6 @@
 ```
 function remove_first_image ($content) {
-if (!is_page() && !is_feed() && !is_feed() && !is_home()) {
+if (!is_page() && !is_feed() && !is_home()) {
 $content = preg_replace("/<img[^>]+\>/i", "", $content, 1);
 } return $content;
 }
