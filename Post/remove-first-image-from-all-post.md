@@ -1,7 +1,8 @@
 ```
+//Remove First Image From All Post
 function remove_first_image ($content) {
 if (!is_page() && !is_feed() && !is_home()) {
-$content = preg_replace("/<img[^>]+\>/i", "", $content, 1);
+$content = preg_replace("/<figure(.*)>(.*?)<\/figure>/", "", $content, 1);
 } return $content;
 }
 add_filter('the_content', 'remove_first_image');
