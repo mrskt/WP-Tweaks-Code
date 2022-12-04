@@ -1,3 +1,16 @@
+### Rank Math Title Dynamically From Shortcode
+```
+// Rank Math Title Dynamically From Shortcode
+add_filter( 'rank_math/frontend/title', function( $title ) {
+		if( is_singular( $post_types = 'post' ) ) {
+			return do_shortcode('[mbv name="theme-plugin-meta-title"]');
+		}
+
+	 return $title;
+	});
+```
+
+
 ### Meta Title
 ```
 add_filter( 'rank_math/frontend/title', function( $title ) {
