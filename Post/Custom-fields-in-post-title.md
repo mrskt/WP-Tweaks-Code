@@ -20,3 +20,14 @@ return do_shortcode('[mbv name="theme-plugin-title"]');
 return $title;
 });
 ```
+### Example 3 (Excluding Pages)
+
+```
+// Custom Fields to title
+add_filter('the_title', function ($title) {
+if( in_the_loop() && !is_singular( $post_types = 'page' )){
+return do_shortcode('[mbv name="theme-plugin-title"]');
+}
+return $title;
+});
+```
