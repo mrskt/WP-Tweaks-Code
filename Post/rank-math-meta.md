@@ -32,19 +32,23 @@ add_filter( 'rank_math/frontend/description', function( $description ) {
 
 ### Full Customized Meta Title
 ```
-// Rank Math Title Dynamically
+// Rank Math Title Dynamically From Shortcode
 add_filter( 'rank_math/frontend/title', function( $title ) {
-		if( is_singular( $post_types = 'post' ) && $tpname = get_field('tpname') && has_term( 'free-wp', 'category' ) && !has_tag( $tag = 'bundle-themes-and-plugins') ) {
-			return do_shortcode('[mbv name="theme-plugin-title"]');
-		}
-			if( is_singular( $post_types = 'post' ) && !$tpname = get_field('tpname') && has_term( 'free-wp', 'category' ) && !has_tag( $tag = 'bundle-themes-and-plugins') ) {
-			return do_shortcode('[mbv name="noacf-pm-title"]');
-		}
-			if( is_singular( $post_types = 'post' ) &&  has_term( 'free-blogger-templates', 'category' ) && !has_tag( $tag = 'bundle-blogger-templates') ) {
-			return do_shortcode('[mbv name="bt-meta-title"]');
-		}
-	 return $title;
-	});
+	$tp_version = rwmb_get_value( 'tp_version', $post->ID );
+    $tp_type = rwmb_get_value( 'tp_type', $post->ID );
+if( is_singular( $post_types = 'post' ) && ! has_tag( 'themes-and-plugins-bundle' ) && $tpname = rwmb_get_value('tp_name', $post->ID ) ) {
+    $string = 'Free Download '.$tpname . ' v' . $tp_version . ' ' . $tp_type;
+    if (strlen($string) > 60) {
+        return $tpname . ' v' . $tp_version . ' ' . 'Free Download';
+    } else {
+        return $string;
+    }
+}
+if( is_singular( $post_types = 'post' ) && has_tag( 'themes-and-plugins-bundle' ) && $tpname = rwmb_get_value('tp_name', $post->ID ) ) {
+    return $tpname . ' ' . $tp_version . ' Free Download';
+    }
+    return $title;
+});
 ```
 
 By Using This Codes and your own desired conditional tags you can Customize Rank Math Meta Titles & Descriptions Very Easily.
