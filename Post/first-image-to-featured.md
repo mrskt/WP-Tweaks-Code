@@ -1,47 +1,93 @@
-### How this works
-Let’s take a look at the plugin’s code, which is very simple.
+You can add this code in your theme's functions.php file instead of a plugin:
+
 ```
-if ( function_exists( 'add_theme_support' ) ) {
+function set_first_image_as_featured($post_id) {
 
-    add_theme_support( 'post-thumbnails' ); // This should be in your theme. But we add this here because this way we can have featured images before swicth to a theme that supports them.
+    $post = get_post($post_id);
 
-    function easy_add_thumbnail($post) {
 
-        $already_has_thumb = has_post_thumbnail();
-        $post_type = get_post_type( $post->ID );
-        $exclude_types = array('');
-        $exclude_types = apply_filters( 'eat_exclude_types', $exclude_types );
 
-        // do nothing if the post has already a featured image set
-        if ( $already_has_thumb ) {
-            return;
-        }
+    // Check if a featured image is already set
 
-        // do the job if the post is not from an excluded type
-        if ( ! in_array( $post_type, $exclude_types ) ) {
-            // get first attached image
-            $attached_image = get_children( "order=ASC&post_parent=$post->ID&post_type=attachment&post_mime_type=image&numberposts=1" );
+    if (has_post_thumbnail($post_id)) {
 
-            if ( $attached_image ) {
-                $attachment_values = array_values( $attached_image );
-                // add attachment ID
-                add_post_meta( $post->ID, '_thumbnail_id', $attachment_values[0]->ID, true );
-            }
-        }
+        return;
+
     }
 
-    // set featured image before post is displayed (for old posts)
-    add_action('the_post', 'easy_add_thumbnail');
 
-    // hooks added to set the thumbnail when publishing too
-    add_action('new_to_publish', 'easy_add_thumbnail');
-    add_action('draft_to_publish', 'easy_add_thumbnail');
-    add_action('pending_to_publish', 'easy_add_thumbnail');
-    add_action('future_to_publish', 'easy_add_thumbnail');
+
+    // Get the first image from the post content
+
+    $first_image = '';
+
+    $matches = array();
+
+    preg_match('/<img.+src=[\'"](?P<src>.+?)[\'"].*>/i', $post->post_content, $matches);
+
+    if (isset($matches['src'])) {
+
+        $first_image = $matches['src'];
+
+    }
+
+
+
+    // If a first image is found, set it as the featured image
+
+    if (!empty($first_image)) {
+
+        $attachment_id = attachment_url_to_postid($first_image);
+
+        if ($attachment_id) {
+
+            set_post_thumbnail($post_id, $attachment_id);
+
+        }
+
+    }
+
 }
+
+
+
+add_action('save_post', 'set_first_image_as_featured');
+
 ```
-What this code does is that it creates a function called easy_add_thumbnail, which checks if a featured image has been set for your post, and then if a featured image hasn’t been set, it will scan through the images in your post and assign one of them to be the featured image.
 
-Next, this code hooks that easy_add_thumbnail function to the post editing events so that the function will be called every time the post is published or displayed (for old posts).
 
-If you don’t want to install the plugin, you can just add this code snippet to your theme’s function.php file or create your own plugin, whichever you prefer.
+
+And for existing posts, you can add this one time code and after that refresh your wp dashboard and then remove this code:
+
+
+```
+function set_featured_images_for_existing_posts() {
+
+    $args = array(
+
+        'post_type' => 'post',
+
+        'posts_per_page' => -1, // set the number of posts per page to -1 to get all posts
+
+    );
+
+    $query = new WP_Query($args);
+
+    if ($query->have_posts()) {
+
+        while ($query->have_posts()) {
+
+            $query->the_post();
+
+            set_first_image_as_featured(get_the_ID());
+
+        }
+
+        wp_reset_postdata();
+
+    }
+
+}
+
+add_action('init', 'set_featured_images_for_existing_posts');
+```
