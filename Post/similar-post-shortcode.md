@@ -16,7 +16,8 @@ function saur8bh_similar_posts_shortcode($atts) {
     'post_status' => 'publish',
     'orderby' => 'modified',
     'order' => 'DESC',
-    'posts_per_page' => $atts['max']
+    'posts_per_page' => $atts['max'],
+    'post__not_in' => array(get_the_ID())
   );
 
   // Add the taxonomy query, if specified
@@ -49,7 +50,7 @@ function saur8bh_similar_posts_shortcode($atts) {
 
   // Build the output HTML
   $output = '<div class="saur8bh-sp">';
-  $output .= '<p><strong>Similar Posts:</strong></p>';
+  $output .= '<p>Similar Posts:</p>';
   $output .= '<ul>';
   while ($query->have_posts()) {
     $query->the_post();
@@ -68,6 +69,7 @@ function saur8bh_similar_posts_shortcode($atts) {
 
 // Register the shortcode
 add_shortcode('saur8bh-sp', 'saur8bh_similar_posts_shortcode');
+
 ```
 You can then use the shortcode in your posts or pages like this:
 
